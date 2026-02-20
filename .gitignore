@@ -1,0 +1,12 @@
+node_modules/
+dist/
+out/
+.wrangler/
+.dev.vars
+.env
+.env.*
+*.sqlite
+*.db
+*.log
+wrangler.toml.local
+node_modules/.cache/wrangler/
