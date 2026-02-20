@@ -27,13 +27,12 @@ if [[ "$EMBEDDED_PG" == "true" ]]; then
     echo "PostgreSQL binaries not found. Set PG_BIN_DIR or install postgresql server."
     exit 1
   fi
-  export PATH="$PG_BIN_DIR:$PATH"
   mkdir -p "$PGDATA" "$WORK_DIR"
   chown -R postgres:postgres "$PGDATA" "$WORK_DIR"
   if [[ ! -s "$PGDATA/PG_VERSION" ]]; then
-    su - postgres -c "initdb -D $PGDATA"
+    su - postgres -c "$PG_BIN_DIR/initdb -D $PGDATA"
   fi
-  su - postgres -c "pg_ctl -D $PGDATA -o '-F -p $PGPORT -h 127.0.0.1' -w start"
+  su - postgres -c "$PG_BIN_DIR/pg_ctl -D $PGDATA -o '-F -p $PGPORT -h 127.0.0.1' -w start"
   MB_PG_ADMIN_URL="postgresql://$PGUSER@127.0.0.1:$PGPORT/postgres"
   MB_PG_DB_NAME="$PGDB"
   MB_PG_URL="postgresql://$PGUSER@127.0.0.1:$PGPORT/$PGDB"
@@ -88,7 +87,7 @@ npm run prepare:wrangler
 npm run build:weekly
 
 if [[ "$EMBEDDED_PG" == "true" ]]; then
-  su - postgres -c "pg_ctl -D $PGDATA -w stop"
+  su - postgres -c "$PG_BIN_DIR/pg_ctl -D $PGDATA -w stop"
 fi
 }
 
