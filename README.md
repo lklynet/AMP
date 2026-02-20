@@ -39,6 +39,7 @@ Required environment variables:
 - `D1_DATABASE_ID`
 - `MB_DUMP_URL` (use `https://data.metabrainz.org/pub/musicbrainz/data/fullexport/`)
 - `EMBEDDED_PG=true`
+- `PGPORT` (optional, defaults to 5432; use if port 5432 is in use)
 
 Optional:
 - `SCHEDULE_CRON` (cron schedule, default in compose is Monday 03:00)

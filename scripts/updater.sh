@@ -53,7 +53,7 @@ if [[ -n "$MB_DUMP_URL" || -n "$MB_DUMP_SQL" ]]; then
 fi
 
 if [[ -n "$MB_DUMP_URL" ]]; then
-  MB_DUMP_URL="$(echo "$MB_DUMP_URL" | tr -d '\r\n')"
+  MB_DUMP_URL="$(echo "$MB_DUMP_URL" | tr -d '\r\n' | sed "s/[`'\\\"]//g")"
   if [[ "$MB_DUMP_URL" == *"/fullexport" || "$MB_DUMP_URL" == *"/fullexport/" ]]; then
     BASE_URL="${MB_DUMP_URL%/}"
     LATEST_DIR="$(curl -fsSL "$BASE_URL/LATEST" | tr -d '\r\n' || true)"
@@ -75,8 +75,13 @@ if [[ -n "$MB_DUMP_URL" ]]; then
   echo "Resolved MB_DUMP_URL=$MB_DUMP_URL"
   mkdir -p "$WORK_DIR"
   DUMP_FILE="${MB_DUMP_FILE:-$WORK_DIR/mbdump.tar.bz2}"
-  if [[ "${FORCE_DOWNLOAD:-false}" == "true" || ! -f "$DUMP_FILE" ]]; then
+  if [[ "${FORCE_DOWNLOAD:-false}" == "true" ]]; then
     rm -f "$DUMP_FILE"
+  fi
+  if [[ -f "$DUMP_FILE" ]]; then
+    echo "Resuming download $MB_DUMP_URL"
+    curl -fL --retry 3 --retry-delay 5 -C - "$MB_DUMP_URL" -o "$DUMP_FILE"
+  else
     echo "Downloading $MB_DUMP_URL"
     curl -fL --retry 3 --retry-delay 5 "$MB_DUMP_URL" -o "$DUMP_FILE"
   fi
