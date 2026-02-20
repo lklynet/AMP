@@ -54,6 +54,15 @@ if [[ -n "$MB_DUMP_URL" ]]; then
   if [[ "$MB_DUMP_URL" == *"/fullexport" || "$MB_DUMP_URL" == *"/fullexport/" ]]; then
     BASE_URL="${MB_DUMP_URL%/}"
     LATEST_DIR="$(curl -fsSL "$BASE_URL/LATEST" | tr -d '\r\n' || true)"
+    if [[ "$LATEST_DIR" == latest-is-* ]]; then
+      LATEST_DIR="${LATEST_DIR#latest-is-}"
+    fi
+    if [[ -z "$LATEST_DIR" ]]; then
+      LATEST_DIR="$(curl -fsSL "$BASE_URL/" | grep -o 'latest-is-[0-9]\{8\}-[0-9]\{6\}' | head -n 1 || true)"
+      if [[ "$LATEST_DIR" == latest-is-* ]]; then
+        LATEST_DIR="${LATEST_DIR#latest-is-}"
+      fi
+    fi
     if [[ -z "$LATEST_DIR" ]]; then
       echo "Unable to resolve latest fullexport directory from $BASE_URL/LATEST"
       exit 1
