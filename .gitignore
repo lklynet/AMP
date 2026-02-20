@@ -9,4 +9,5 @@ out/
 *.db
 *.log
 wrangler.toml.local
+wrangler.toml
 node_modules/.cache/wrangler/
